@@ -1,14 +1,27 @@
 ---
-driver:
-  name: vagrant
-
 provisioner:
   name: chef_solo
 
 platforms:
-  - name: ubuntu-14.04
+  - name: ubuntu-1404
+    transport:
+      ssh_key: ~/.ssh/your_private_key_file.pem
+      username: ubuntu
+    driver:
+      name: ec2
+      aws_ssh_key_id: AWS_SSH_KEY_ID
+    image_search:
+      name: ubuntu-1404
+  - name: vagrant
+    driver:
+      name: vagrant
+      box: bento/ubuntu-14.04
+      network:
+          - ["forwarded_port", {guest: 80, host: 8080}]
+          - ["private_network", {ip: "192.168.33.33"}]
 
 suites:
   - name: default
     run_list:
+      - recipe[cloudops::default]
     attributes:
